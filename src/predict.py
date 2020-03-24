@@ -20,11 +20,12 @@ def predict():
         print(FOLD)
         df = pd.read_csv(TEST_DATA)
         encoders = joblib.load(os.path.join("models", f"{MODEL}_{FOLD}_label_encoder.pkl"))
-        cols = joblib.load(os.path.join("models", f"{MODEL}_{FOLD}_columns .pkl"))        
+        cols = joblib.load(os.path.join("models", f"{MODEL}_{FOLD}_columns.pkl"))        
 
         for c in encoders:
             print(c)
             lbl = encoders[c]
+            df.loc[:, c] = df.loc[:, c].astype(str).fillna("NONE")
             df.loc[:, c] = lbl.transform(df[c].values.tolist())
             
         # predict the data
