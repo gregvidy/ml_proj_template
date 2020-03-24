@@ -4,14 +4,17 @@ from sklearn import ensemble
 from sklearn import preprocessing
 from sklearn import metrics
 
+from . import dispatcher
+
 TRAINING_DATA = os.environ.get("TRAINING_DATA")
 FOLD = int(os.environ.get("FOLD"))
+MODEL = os.environ.get("MODEL")
 
 FOLD_MAPPING = {
-    0: [1, 2, 3, 4]
-    1: [0, 2, 3, 4]
-    2: [0, 1, 3, 4]
-    3: [0, 1, 2, 4]
+    0: [1, 2, 3, 4],
+    1: [0, 2, 3, 4],
+    2: [0, 1, 3, 4],
+    3: [0, 1, 2, 4],
     4: [0, 1, 2, 3]
 }
 
@@ -37,7 +40,7 @@ if __name__ == "__main__":
         label_encoders.append((c, lbl))
     
     # data is ready to train
-    clf = ensemble.RandomForestClassifier(n_jobs=-1, verbose=2)
+    clf = dispatcher.MODELS[MODEL]
     clf.fit(train_df, ytrain)
     preds = clf.predict_proba(valid_df)[:, 1]
     print(metrics.roc_auc_score(yvalid, preds))
