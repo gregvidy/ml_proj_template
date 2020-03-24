@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn import ensemble
 from sklearn import preprocessing
 from sklearn import metrics
+import joblib
 
 from . import dispatcher
 
@@ -44,3 +45,6 @@ if __name__ == "__main__":
     clf.fit(train_df, ytrain)
     preds = clf.predict_proba(valid_df)[:, 1]
     print(metrics.roc_auc_score(yvalid, preds))
+
+    joblib.dump(label_encoders, f"models/{MODEL}_label_encoder.pkl")
+    joblib.dump(clf, f"models/{MODEL}.pkl")
