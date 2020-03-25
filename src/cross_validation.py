@@ -76,7 +76,8 @@ class CrossValidation:
 
         else:
             raise Exception("Problem type not supported!")
-
+        
+        del train_idx
         return self.dataframe
 
 if __name__ == "__main__":
