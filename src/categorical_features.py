@@ -12,8 +12,8 @@ class CategoricalFeatures:
         """
         df: pandas dataframe
         categorical_features: list of categorical column names e.g. nominal, ordinal data type
-        encoding_type: type of encoding e.g. label, ohe, binary
-        handle_na: handle the missing values or not
+        encoding_type: type of encoding e.g. label, one_hot, binary
+        handle_na: handle the missing values or not e.g. True/False
         """
         self.df = df
         self.cat_feats = categorical_features
@@ -49,13 +49,17 @@ class CategoricalFeatures:
         return self.output_df
 
     def _one_hot_encoding(self):
-         
+         one_hot_encoders = preprocessing.OneHotEncoder()
+         one_hot_encoders.fit(self.df[self.cat_feats].values)
+         return one_hot_encoders.transform(self.df[self.cat_feats].values)
 
     def fit_transform(self):
         if self.enc_type == "label":
             return self._label_encoding()
         elif self.enc_type == "binary":
             return self._binarization_encoding()
+        elif self.enc_type == "one_hot":
+            return self._one_hot_encoding()
         else:
             raise Exception("Encoding type not supported!")
          
@@ -76,6 +80,8 @@ class CategoricalFeatures:
                     new_cols_name = c + f"__bin_{j}"
                     dataframe[new_cols_name] = val[:, j]
             return dataframe
+        elif self.enc_type == "one_hot":
+            self.one_hot_encoders.transform(dataframe[self.cat_feats].values)
     
         else:
             raise Exception("Encoding type not supported!")       
