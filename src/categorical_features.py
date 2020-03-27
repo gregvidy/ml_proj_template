@@ -25,7 +25,7 @@ class CategoricalFeatures:
 
         if self.handle_na is True:
             for c in self.cat_feats:
-                self.df.loc[:, c] = self.df.loc[:, c].astype(str).fillna("-9999999")        
+                self.df.loc[:, c] = self.df.loc[:, c].astype(str).fillna("-9999999")
         self.output_df = self.df.copy(deep=True)
 
     def _label_encoding(self):
@@ -88,11 +88,22 @@ class CategoricalFeatures:
 
 if __name__ == "__main__":
     df = pd.read_csv("../input/train.csv")
+    df_test = pd.read_csv("../input/test.csv")
+
+    train_len = len(df)
+
+    df_test["target"] = -1
+    full_data = pd.concat([df, df_test])
+    
     cols = [c for c in df.columns if c not in ["id", "target"]]
     print(cols)
-    cat_feats = CategoricalFeatures(df,
+    cat_feats = CategoricalFeatures(full_data,
                                     categorical_features=cols,
-                                    encoding_type="label",
+                                    encoding_type="one_hot",
                                     handle_na=True)
-    output_df = cat_feats.fit_transform()
-    print(output_df.head())
+    full_data_transformed = cat_feats.fit_transform()
+
+    train_df = full_data_transformed[:train_len, :]
+    test_df = full_data_transformed[train_len:, :]
+    print(train_df.shape)
+    print(test_df.shape)
